@@ -19,28 +19,11 @@ class SentenceCorrector(object):
         # print(self.conf_matrix_inv)
         
 
-    def search(self, start_state):
 
-        # f = open(helper_words)
-
-        start = time.time()
-
-        """
-        :param start_state: str Input string with spelling errors
-        """
-        # You should keep updating self.best_state with best string so far.
-        self.best_state = start_state
-        # print("Initial Sentence :",self.best_state)
-        print("Initial Cost :", self.cost_fn(self.best_state))
-
-        mylist = start_state.split(" ")
-        init_list = start_state.split(" ")
-
-        Word_changed = {}
-        for i in range(len(mylist)):
-            Word_changed[i] = False
 
 # ----------------------------------------------------------------------------------------------
+
+    def singular_change(self,mylist,init_list,Word_changed,start):
 
         for i in range(len(mylist)):
 
@@ -89,6 +72,8 @@ class SentenceCorrector(object):
                         # Word_changed[i] = True
         self.best_state = " ".join(mylist)
         print("COMPLETED1")
+
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -193,7 +178,7 @@ class SentenceCorrector(object):
             
             temp = init_list[i]
 
-            if(not Word_changed[i]):
+            if(not Word_changed[i] and len(temp) >= 3):
 
                 for j in range(len(temp)*len(temp)):
 
@@ -287,3 +272,26 @@ class SentenceCorrector(object):
         end = time.time()
         print("Time taken is:",round(end - start,4),"secs","\n")
         # raise Exception("Not Implemented.")
+
+    def search(self, start_state):
+    
+        # f = open(helper_words)
+
+        start = time.time()
+
+        """
+        :param start_state: str Input string with spelling errors
+        """
+        # You should keep updating self.best_state with best string so far.
+        self.best_state = start_state
+        # print("Initial Sentence :",self.best_state)
+        print("Initial Cost :", self.cost_fn(self.best_state))
+
+        mylist = start_state.split(" ")
+        init_list = start_state.split(" ")
+
+        Word_changed = {}
+        for i in range(len(mylist)):
+            Word_changed[i] = False
+
+        self.singular_change(mylist,init_list,Word_changed,start)
