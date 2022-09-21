@@ -1,5 +1,5 @@
-file1 = ".\data\pred_tc.txt"
-file2 = ".\data\corpus.txt"
+file1 = ".\data\pred.txt"
+file2 = ".\data\output.txt"
 
 f = open(file1,"r")
 Lines1 = f.readlines()

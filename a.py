@@ -8,6 +8,7 @@ class SentenceCorrector(object):
         
         # You should keep updating following variable with best string so far.
         self.best_state = None  
+        
         self.conf_matrix_inv={}
         for i in string.ascii_lowercase:
             self.conf_matrix_inv[i]=[]
