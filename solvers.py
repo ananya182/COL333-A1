@@ -1,6 +1,7 @@
 import random
 import time
 import string
+from turtle import update
 
 class SentenceCorrector(object):
     def __init__(self, cost_fn, conf_matrix):
@@ -185,6 +186,27 @@ class SentenceCorrector(object):
                                     self.best_state = " ".join(mylist)
 
         print("COMPLETED3",round(time.time()-start,6))
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+    def update_costs(self,mylist):
+        costs=[]
+        for i in range(len(mylist)):
+            if(len(mylist[i])>=5):
+                if(i > 1 and i < len(mylist) - 2):
+                    c1 = self.cost_fn(mylist[i-1] +" "+ mylist[i] + " "+ mylist[i+1])
+                    c2 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] + " "+ mylist[i])
+                    c3 = self.cost_fn(mylist[i] +" "+ mylist[i+1] + " "+ mylist[i+2])
+                    costs.append((i,c1+c2+c3))
+                elif(i == 0):
+                    c1 = self.cost_fn(mylist[i] +" "+ mylist[i+1] +" "+ mylist[i+2]) 
+                    costs.append((i,c1*2.5))
+                else:
+                    c1 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] +" "+ mylist[i]) 
+                    costs.append((i,c1*2.5))
+
+        costs.sort(key=lambda x:x[1],reverse=True)
+        return costs
 # ---------------------------------------------------------------------------------------------------------------------
     def triple_change_random(self,mylist,init_list,Word_changed,start):
         costs=[]
@@ -205,19 +227,16 @@ class SentenceCorrector(object):
                 
 
         costs.sort(key=lambda x:x[1],reverse=True)
-        # print(costs)
+        print(costs)
 
         for p in range(len(costs)):
-
+            print("p=",p)
             i = costs[p][0]
             temp = init_list[i]
             c=10
 
             if(not Word_changed[i]):
-                if c!=1:
-                    c-=1
-
-
+                
                 for j in range(len(temp)*c):
 
                     temp = init_list[i]
@@ -245,6 +264,7 @@ class SentenceCorrector(object):
                     flag1 = True
                     flag2 = True
                     flag3 = True
+                    flag4=True
                     # print(temp, self.cost_fn(temp))
                     for k1 in self.conf_matrix_inv[ch1]:
                         if flag1 == True:
@@ -288,6 +308,7 @@ class SentenceCorrector(object):
                                                 c2 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] +" "+ mylist[i])
 
                                             if(c1 < c2 and not Word_changed[i]):
+
                                                 print("Changed 4:",init_list[i],"->",temp)
                                                 
                                                 mylist[i] = temp
@@ -295,15 +316,114 @@ class SentenceCorrector(object):
                                                 flag1 = False
                                                 flag2 = False
                                                 flag3 = False
+                                                flag4=False
                                                 self.best_state = " ".join(mylist)
+                                                costs=self.update_costs(mylist)
                                                # self.singular_change_complete(mylist,init_list,Word_changed,start)
                                                 break
                                 else:
                                     break
                         else:
-                            break
+                           break
+                    
 
+                if flag4 and len(init_list[i])>=7:
+                  print("yes")  
+                  for j in range(len(init_list[i])*10):
+
+                    temp = init_list[i]
+
+                    i1 = random.randint(0,len(temp)-1)
+                    i2 = random.randint(0,len(temp)-1)
+                    i3 = random.randint(0,len(temp)-1)
+                    i4 = random.randint(0,len(temp)-1)
+
+                    while(i1 == i2):
+                        i2 = random.randint(0,len(temp)-1)
+                    while(i2 == i3 or i1==i3):
+                        i3 = random.randint(0,len(temp)-1)
+                    while(i1==i4 or i2==i4 or i3==i4):
+                        i4 = random.randint(0,len(temp)-1)
+
+                    newlist = [i1,i2,i3,i4]
+                    newlist.sort()
+
+                    j1 = newlist[0]
+                    j2 = newlist[1]
+                    j3 = newlist[2]
+                    j4 = newlist[3]
+
+                    ch1 = temp[j1]
+                    ch2 = temp[j2]
+                    ch3 = temp[j3]
+                    ch4 = temp[j4]
+
+                    flag1 = True
+                    flag2 = True
+                    flag3 = True
+                    flag4 = True
+                    # print(temp, self.cost_fn(temp))
+                    for k1 in self.conf_matrix_inv[ch1]:
+                        if flag1 == True:
+
+                            for k2 in self.conf_matrix_inv[ch2]:
+                                if flag2 == True :
+
+                                    for k3 in self.conf_matrix_inv[ch3]:
+                                        if flag3==False:
+                                            break
+                                        
+                                        for k4 in self.conf_matrix_inv[ch4]:
+
+                                            temp = init_list[i]
+                                            v = [chars for chars in temp]
+                                            v[j1] = k1
+                                            v[j2] = k2
+                                            v[j3] = k3
+                                            v[j4] = k4
+                                            temp = ""
+                                            for chars in v:
+                                                temp += chars
+
+                                            temp2 = mylist[i]
+
+                                            mylist[i] = temp
+                                            c1_b = self.cost_fn(" ".join(mylist))
+                                            mylist[i] = temp2
+                                            c2_b = self.cost_fn(" ".join(mylist))
+
+                                            if(c1_b > c2_b):
+                                                continue
+
+                                            else :
+                                                # print("Temp is",temp,"===",mylist[i])
+                                                
+                                                if(i != 0 and i != len(mylist) - 1):
+                                                    c1 = self.cost_fn(mylist[i-1] +" "+ temp + " "+ mylist[i+1]) 
+                                                    c2 = self.cost_fn(mylist[i-1] +" "+ mylist[i] +" "+ mylist[i+1])
+                                                    # print(mylist[i-1] + temp + mylist[i+1], self.cost_fn(temp))
+                                                elif(i == 0):
+                                                    c1 = self.cost_fn(temp +" "+ mylist[i+1] +" "+ mylist[i+2]) 
+                                                    c2 = self.cost_fn(mylist[i] +" "+ mylist[i+1] +" "+ mylist[i+2])
+                                                else :
+                                                    c1 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] +" "+ temp) 
+                                                    c2 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] +" "+ mylist[i])
+
+                                                if(c1 < c2 and not Word_changed[i]):
+                                                    print("Changed 5:",init_list[i],"->",temp)
+                                                    mylist[i] = temp
+                                                    Word_changed[i] = True
+                                                    flag1 = False
+                                                    flag2 = False
+                                                    flag3 = False
+                                                    self.best_state = " ".join(mylist)
+                                                    break
+                                else:
+                                    break
+                        else:
+                            break
         print("COMPLETED4",round(time.time()-start,6))
+
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
     def quadruple_change_random(self,mylist,init_list,Word_changed,start):
 
@@ -430,6 +550,8 @@ class SentenceCorrector(object):
                 self.best_state = " ".join(mylist)
 
         print("COMPLETED6",round(time.time()-start,6))
+        print()
+        print()
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
     def final_info(self,mylist,init_list,Word_changed,start):
 
