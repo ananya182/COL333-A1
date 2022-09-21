@@ -205,7 +205,7 @@ class SentenceCorrector(object):
                 
 
         costs.sort(key=lambda x:x[1],reverse=True)
-        print(costs)
+        # print(costs)
 
         for p in range(len(costs)):
 
@@ -409,6 +409,27 @@ class SentenceCorrector(object):
                             break
 
         print("COMPLETED5",round(time.time()-start,6))
+# ----------------------------------------------------------------------------------------------------------------------
+    def backtrack_change(self,mylist,init_list,Word_changed,start):
+
+        for i in range(len(mylist)):
+
+            temp = init_list[i]
+            temp2 = mylist[i]
+
+            c1 = self.cost_fn(" ".join(mylist)) 
+            mylist[i] = temp
+            c2 = self.cost_fn(" ".join(mylist)) 
+            mylist[i] = temp2 
+
+            # print(c1,c2)
+
+            if(c2 < c1):
+                print("Changed 6:",mylist[i],"->",temp)
+                mylist[i] = temp
+                self.best_state = " ".join(mylist)
+
+        print("COMPLETED6",round(time.time()-start,6))
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
     def final_info(self,mylist,init_list,Word_changed,start):
 
@@ -445,6 +466,9 @@ class SentenceCorrector(object):
         self.singular_change_exhaustive(mylist,init_list,Word_changed,start)
         self.singular_change_complete(mylist,init_list,Word_changed,start)
         self.double_change_exhaustive(mylist,init_list,Word_changed,start)
+        self.singular_change_exhaustive(mylist,init_list,Word_changed,start)
+        self.backtrack_change(mylist,init_list,Word_changed,start)
+
         # self.singular_change_complete(mylist,init_list,Word_changed,start)
 
         for random_iterations in range(no_of_random_iterations):
