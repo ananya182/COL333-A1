@@ -52,11 +52,14 @@ class SentenceCorrector(object):
                 ch = temp[j]
 
                 # print(temp, self.cost_fn(temp))
-                for k in self.conf_matrix.keys():
+                for k in self.conf_matrix_inv[ch]:
 
                     temp = init_list[i]
-
-                    temp = temp[:j] + k + temp[j+1:]
+                    v = [chars for chars in temp]
+                    v[j] = k
+                    temp = ""
+                    for chars in v:
+                        temp += chars
 
                     # temp2 = mylist[i]
 
@@ -84,11 +87,7 @@ class SentenceCorrector(object):
                         print("Changed 1:",init_list[i],"->",temp)
                         mylist[i] = temp
                         # Word_changed[i] = True
-                        self.best_state = " ".join(mylist)
-                    else:
-                        temp = temp[:j] + ch + temp[j+1:]
-                        # print(temp)
-
+        self.best_state = " ".join(mylist)
         print("COMPLETED1")
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -119,8 +118,8 @@ class SentenceCorrector(object):
                         print("Changed 2",init_list[i],"->",temp)
                         mylist[i] = temp
                         # Word_changed[i] = True
-                        self.best_state = " ".join(mylist)
-        #                 # print(temp)
+        self.best_state = " ".join(mylist)
+        print("COMPLETED2",time.time() - start)
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -128,12 +127,13 @@ class SentenceCorrector(object):
             
             temp = init_list[i]
 
+            # for j in range(len(temp)):
             for j in range((len(temp)*len(temp))//3):
 
                 temp = init_list[i]
                 i1 = random.randint(0,len(temp)-1)
                 i2 = random.randint(0,len(temp)-1)
-                while(i1 != i2):
+                while(i1 == i2):
                     i2 = random.randint(0,len(temp)-1)
 
                 j1 = max(i1,i2)
@@ -146,7 +146,16 @@ class SentenceCorrector(object):
                     for k2 in self.conf_matrix_inv[ch2]:
 
                         temp = init_list[i]
-                        temp = (temp[:j1] + k1 + temp[j1+1:j2] + k2 + temp[j2+1:])[:len(temp)]
+                        temp = init_list[i]
+                        v = [chars for chars in temp]
+                        v[j1] = k1
+                        v[j2] = k2
+                        temp = ""
+                        for chars in v:
+                            temp += chars
+
+                        # print("Temp is",temp,"===",mylist[i])
+
                         # print("Temp is",temp)
                         temp2 = mylist[i]
 
@@ -171,13 +180,13 @@ class SentenceCorrector(object):
                                 c1 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] +" "+ temp) 
                                 c2 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] +" "+ mylist[i])
 
-                            if(c1 < c2 and c1_b < c2_b and not Word_changed[i]):
+                            if(c1 < c2 and not Word_changed[i]):
                                 print("Changed 3:",init_list[i],"->",temp)
                                 mylist[i] = temp
                                 # Word_changed[i] = True
-                                self.best_state = " ".join(mylist)
 
-        print("COMPLETED3")
+        self.best_state = " ".join(mylist)
+        print("COMPLETED3",time.time() - start)
 # ------------------------------------------------------------------------------------------------------------
 
         for i in range(len(mylist)):
@@ -191,9 +200,10 @@ class SentenceCorrector(object):
                 i1 = random.randint(0,len(temp)-1)
                 i2 = random.randint(0,len(temp)-1)
                 i3 = random.randint(0,len(temp)-1)
-                while(i1 != i2):
+
+                while(i1 == i2):
                     i2 = random.randint(0,len(temp)-1)
-                while(i1 != i3 and i2 != i3):
+                while(i1 == i3 or i2 == i3):
                     i3 = random.randint(0,len(temp)-1)
 
                 newlist = [i1,i2,i3]
@@ -212,8 +222,15 @@ class SentenceCorrector(object):
                         for k3 in self.conf_matrix_inv[ch3]:
 
                             temp = init_list[i]
-                            temp = (temp[:j1] + k1 + temp[j1+1:j2] + k2 + temp[j2+1:j3] + k3 + temp[j3+1:])[:len(temp)]
-                            print("Temp is",temp,"===",mylist[i])
+                            v = [chars for chars in temp]
+                            v[j1] = k1
+                            v[j2] = k2
+                            v[j3] = k3
+                            temp = ""
+                            for chars in v:
+                                temp += chars
+
+                            # print("Temp is",temp,"===",mylist[i])
                             
                             if(i != 0 and i != len(mylist) - 1):
                                 c1 = self.cost_fn(mylist[i-1] +" "+ temp + " "+ mylist[i+1]) 
