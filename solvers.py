@@ -75,7 +75,8 @@ class SentenceCorrector(object):
 
         for i in range(len(mylist)):
 
-            temp = mylist[i]
+            temp = init_list[i]
+
             for j in range(len(temp)):
 
                 temp = init_list[i]
@@ -101,6 +102,15 @@ class SentenceCorrector(object):
                     if(c2 < c1):
                         print("Changed 2",init_list[i],"->",temp)
                         mylist[i] = temp
+
+            c1 = self.cost_fn(" ".join(mylist)) 
+            temp2 = mylist[i]
+            temp = init_list[i]
+            mylist[i] = temp
+            c2 = self.cost_fn(" ".join(mylist)) 
+            if(c2 < c1):
+                print("Changed 2",init_list[i],"->",temp)
+                mylist[i] = temp
 
         self.best_state = " ".join(mylist)
         print("COMPLETED2",round(time.time()-start,6))
@@ -241,7 +251,7 @@ class SentenceCorrector(object):
                                             continue
 
                                         else :
-                                            print("Temp is",temp,"===",mylist[i])
+                                            # print("Temp is",temp,"===",mylist[i])
                                             
                                             if(i != 0 and i != len(mylist) - 1):
                                                 c1 = self.cost_fn(mylist[i-1] +" "+ temp + " "+ mylist[i+1]) 
@@ -410,6 +420,7 @@ class SentenceCorrector(object):
         self.singular_change_exhaustive(mylist,init_list,Word_changed,start)
         self.singular_change_complete(mylist,init_list,Word_changed,start)
         self.double_change_exhaustive(mylist,init_list,Word_changed,start)
+        # self.singular_change_complete(mylist,init_list,Word_changed,start)
 
         for random_iterations in range(no_of_random_iterations):
             self.triple_change_random(mylist,init_list,Word_changed,start)
