@@ -1,0 +1,22 @@
+Ananya Mathur (2020CS50416), Ishaan Govil (2020CS50497)
+
+# INTRODUCTION
+In this assignment to tackle the problem of misidentification of characters by the OCR system, we implement a search 
+based algorithm which helps us to identify the misplaced characters in the words in a level wise fashion, based on how
+much error is present in the word. The words would be replaced based on the cost function, on the basis whether the cost of 
+the sentence is getting reduced after replacement.
+
+# CORE IDEAS 
+1. Precomputation of conf_matrix_inv - using the given conf_matrix in order to prevent exhaustive repeated search of each
+entry of conf_matrix for each character replacement.
+2. Local search/Hill climbing search -
+3. Breadth first exhaustive search -
+4. Breadth first random search -
+5. Change backtracking - Some words might be replaced because of the local optimality that we are checking, as well as because
+of the initial mistakes present in the complete sentence, so a backtracking of Change is essential to check if the original words
+were better for the overall sentence. 
+
+# Algorithm
+1. Initially we precompute a inverse configuration matrix, computed using the given conf_matrix which stores all the characters
+that can come in place of the misplaced character, assuming that character is misplaced.
+2. Then, we begin in a level wise manner, based on the no. of errors a word might have. We first begin  
