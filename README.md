@@ -1,9 +1,11 @@
-# Ananya Mathur (2020CS50416), Ishaan Govil (2020CS50497)
+# Automated Correction of Incorrectly Recognised Text
+
+## Authors -  Ananya Mathur (2020CS50416), Ishaan Govil (2020CS50497)
 
 ## INTRODUCTION
 In this assignment to tackle the problem of misidentification of characters by the OCR system, we implement a search based algorithm which helps us to identify the misplaced characters in the words in a level wise fashion similar to iterative deepening, based on how much error is present in that word. The words would be replaced based on the cost function, on the basis whether the cost of the sentence is getting reduced after replacement, following local updation. 
 
-## CORE IDEAS 
+### CORE IDEAS 
 1. Precomputation of conf_matrix_inv - using the given conf_matrix in order to prevent exhaustive repeated search of each entry of conf_matrix for each character replacement.
 2. Hill climbing search/Greedy updation - At each step of our algorithm, we are exploring a particular finite subset of the whole possible state space(based on evrey word) and then updating the word if we encounter a word that lowers our total cost greedily, similar to that in hill climbing search, instead of maintaining a list/frontier of possible correct sentences
 3. Iterative Deepening - A level wise DFS is performed in our algorithm, similar to iterative deepening, where we increase the no.of replacements we are aiming for, in each word that we are exploring. I.e if we are at a level 2 DFS, then we have considered changes to 2 characters of the word being explored.
@@ -13,7 +15,7 @@ In this assignment to tackle the problem of misidentification of characters by t
 7. Change backtracking - Some words might be replaced because of the local optimality check, as well as because of the initial mistakes present in the complete sentence, so a backtracking of change is essential to check if the original words were better for the overall sentence. 
 8. Single updation - If a word has been changed in a level 3,4 or a level 5 DFS then we are marking it as changed, and are not going to explore it further. This is done in order to ensure that exploration for all possible words has taken place, in the given time frame, and the search space is not getting constrained to just one word. And after all the words have been explored, we again start exploring all the words again in the new loop.
 
-## Algorithm
+### Algorithm
 1. Initially we precompute an inverse configuration matrix, computed using the given conf_matrix which stores all the characters that can come in place of the misplaced character, assuming that character is misplaced. Initially all the words are set to not changed state.
 2. Then, we begin in a level wise manner, based on the no. of errors a word might have. We first begin by invoking the function singular_change_exhaustive. This function locally explores all possible one character replacements in the words using local cost optimality in words along with local updation to find the optimal state.
 3. Next, the function singular_change_complete is invoked. This function checks for global optimality of all one character replacements in all the words in the current best solution.
