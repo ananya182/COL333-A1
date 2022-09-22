@@ -1,5 +1,5 @@
-file1 = ".\\test_cases\pred13.txt"
-file2 = ".\\test_cases\\tc13.txt"
+file1 = ".\\test_cases\pred11.txt"
+file2 = ".\\test_cases\\tc11.txt"
 
 f = open(file1,"r")
 Lines1 = f.readlines()
