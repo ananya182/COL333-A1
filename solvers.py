@@ -554,7 +554,7 @@ class SentenceCorrector(object):
         for i in range(len(mylist)):
             Word_changed[i] = False
 
-        no_of_random_iterations = 10 #Can be fine tuned, given the time available
+        no_of_random_iterations = 100 #Can be fine tuned, given the time available
 
         self.singular_change_exhaustive(mylist,init_list,Word_changed,start) #Single level local cost DFS on each word and local updation
         self.singular_change_complete(mylist,init_list,Word_changed,start)   #Single level overall cost DFS on each word and local updation
@@ -567,6 +567,7 @@ class SentenceCorrector(object):
             self.triple_quad_change_random(mylist,init_list,Word_changed,start)   #Non exhaustive, random, Level 3 and Level 4 local DFS on the worst words that occurs in the sentence, local updation, a 2nd time in case due to randomness the errors were not removed
             self.triple_quad_change_random(mylist,init_list,Word_changed,start)   #Non exhaustive, random, Level 3 and Level 4 local DFS on the worst words that occurs in the sentence, local updation, a 3rd time in case due to randomness the errors were not removed
             self.penta_change_random(mylist,init_list,Word_changed,start)         #Non exhaustive, random, Level 5 DFS on the worst words that occurs in the sentence found greedily
-
+            for i in range(len(mylist)):
+                Word_changed[i] = False
         # self.final_info(mylist,init_list,Word_changed,start) #Printing the final info - the final cost of the output sentence, and the total time taken by the algorithm
 
