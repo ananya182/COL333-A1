@@ -624,7 +624,7 @@ class SentenceCorrector(object):
             # self.singular_change_complete(mylist,init_list,Word_changed,start)
             self.triple_change_random(mylist,init_list,Word_changed,start)
             self.triple_change_random(mylist,init_list,Word_changed,start)
-            self.quadruple_change_random(mylist,init_list,Word_changed,start)
+            self.penta_change_random(mylist,init_list,Word_changed,start)
 
         self.final_info(mylist,init_list,Word_changed,start)
 
