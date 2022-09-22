@@ -187,10 +187,10 @@ class SentenceCorrector(object):
 
         print("COMPLETED3",round(time.time()-start,6))
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
-    def update_costs(self,mylist):
+    def update_costs(self,mylist,n):
         costs=[]
         for i in range(len(mylist)):
-            if(len(mylist[i])>=5):
+            if(len(mylist[i])>=n):
                 if(i > 1 and i < len(mylist) - 2):
                     c1 = self.cost_fn(mylist[i-1] +" "+ mylist[i] + " "+ mylist[i+1])
                     c2 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] + " "+ mylist[i])
@@ -207,26 +207,9 @@ class SentenceCorrector(object):
         return costs
 # ---------------------------------------------------------------------------------------------------------------------
     def triple_change_random(self,mylist,init_list,Word_changed,start):
-        costs=[]
-        for i in range(len(mylist)):
-            if(len(mylist[i])>=5):
-                if(i > 1 and i < len(mylist) - 2):
-                    c1 = self.cost_fn(mylist[i-1] +" "+ mylist[i] + " "+ mylist[i+1])
-                    c2 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] + " "+ mylist[i])
-                    c3 = self.cost_fn(mylist[i] +" "+ mylist[i+1] + " "+ mylist[i+2])
-                    costs.append((i,c1+c2+c3))
-                elif(i == 0):
-                    c1 = self.cost_fn(mylist[i] +" "+ mylist[i+1] +" "+ mylist[i+2]) 
-                    costs.append((i,c1*2.5))
-                else:
-                    c1 = self.cost_fn(mylist[i-2] +" "+ mylist[i-1] +" "+ mylist[i]) 
-                    costs.append((i,c1*2.5))
-
-                
-
-        costs.sort(key=lambda x:x[1],reverse=True)
-        # print(costs)
-
+        
+        costs=self.update_costs(mylist,5)
+    
         p = 0
 
         while p < len(costs):
@@ -325,7 +308,7 @@ class SentenceCorrector(object):
                                                     flag3 = False
                                                     flag4 = False
                                                     self.best_state = " ".join(mylist)
-                                                    costs=self.update_costs(mylist)
+                                                    costs=self.update_costs(mylist,5)
                                                     p = 0
                                                 # self.singular_change_complete(mylist,init_list,Word_changed,start)
                                                     break
@@ -448,14 +431,20 @@ class SentenceCorrector(object):
 
         print("COMPLETED4",round(time.time()-start,6))
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
-    def quadruple_change_random(self,mylist,init_list,Word_changed,start):
+    def penta_change_random(self,mylist,init_list,Word_changed,start):
 
-        for steps in range(len(mylist)):
+        costs=self.update_costs(mylist,9)
+    
+        p = 0
+        
+        while p < len(costs):
 
-            i=random.randint(0,len(init_list)-1)      
+            print("p =",p)
+            i = costs[p][0]
             temp = init_list[i]
+            
 
-            if(not Word_changed[i] and len(temp) >= 7):
+            if(not Word_changed[i]):
 
                 for j in range(len(temp)):
 
@@ -465,6 +454,7 @@ class SentenceCorrector(object):
                     i2 = random.randint(0,len(temp)-1)
                     i3 = random.randint(0,len(temp)-1)
                     i4 = random.randint(0,len(temp)-1)
+                    i5 = random.randint(0,len(temp)-1)
 
                     while(i1 == i2):
                         i2 = random.randint(0,len(temp)-1)
@@ -472,19 +462,24 @@ class SentenceCorrector(object):
                         i3 = random.randint(0,len(temp)-1)
                     while(i1==i4 or i2==i4 or i3==i4):
                         i4 = random.randint(0,len(temp)-1)
+                    while(i1==i5 or i2==i5 or i3==i5 or i4==i5):
+                        i5 = random.randint(0,len(temp)-1)
 
-                    newlist = [i1,i2,i3,i4]
+
+                    newlist = [i1,i2,i3,i4,i5]
                     newlist.sort()
 
                     j1 = newlist[0]
                     j2 = newlist[1]
                     j3 = newlist[2]
                     j4 = newlist[3]
+                    j5 = newlist[4]
 
                     ch1 = temp[j1]
                     ch2 = temp[j2]
                     ch3 = temp[j3]
                     ch4 = temp[j4]
+                    ch5 = temp[j5]
 
                     flag1 = True
                     flag2 = True
@@ -502,6 +497,10 @@ class SentenceCorrector(object):
                                             break
                                         
                                         for k4 in self.conf_matrix_inv[ch4]:
+                                          if flag4==False:
+                                                break
+
+                                          for k5 in self.conf_matrix_inv[ch5]:
 
                                             temp = init_list[i]
                                             v = [chars for chars in temp]
@@ -509,6 +508,7 @@ class SentenceCorrector(object):
                                             v[j2] = k2
                                             v[j3] = k3
                                             v[j4] = k4
+                                            v[j5] = k5
                                             temp = ""
                                             for chars in v:
                                                 temp += chars
@@ -544,7 +544,10 @@ class SentenceCorrector(object):
                                                     flag1 = False
                                                     flag2 = False
                                                     flag3 = False
+                                                    flag4 = False
+                                                    costs=self.update_costs(mylist,9)
                                                     self.best_state = " ".join(mylist)
+                                                    p=0
                                                     break
                                 else:
                                     break
